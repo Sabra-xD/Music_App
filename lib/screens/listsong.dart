@@ -169,69 +169,73 @@ class _TestScreenState extends State<TestScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: FutureBuilder<List<SongModel>>(
-          future: AudioQueryx.querySongs(
-            ignoreCase: true,
-            orderType: OrderType.ASC_OR_SMALLER,
-            sortType: null,
-            uriType: UriType.EXTERNAL,
-          ),
-          builder: (context, snapshot) {
-            print(snapshot.data);
-            print("XXXXXXXXXXXXXXXX");
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
+        body: ListSongs(),
+      ),
+    );
+  }
+
+  FutureBuilder<List<SongModel>> ListSongs() {
+    return FutureBuilder<List<SongModel>>(
+      future: AudioQueryx.querySongs(
+        ignoreCase: true,
+        orderType: OrderType.ASC_OR_SMALLER,
+        sortType: null,
+        uriType: UriType.EXTERNAL,
+      ),
+      builder: (context, snapshot) {
+        print(snapshot.data);
+        print("XXXXXXXXXXXXXXXX");
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text("Error: ${snapshot.error}"),
               );
             } else {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text("Error: ${snapshot.error}"),
-                  );
-                } else {
-                  if (snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text("No Songs found"),
+              if (snapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text("No Songs found"),
+                );
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: const EdgeInsets.all(10),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          // Play Song
+                          playSong(snapshot.data![index].uri, _AudioPlayer);
+                        },
+                        tileColor: Colors.purple.shade800,
+                        leading: IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.music_note_outlined),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.abc),
+                        ),
+                        title: Text(snapshot.data![index].displayNameWOExt),
+                        subtitle: Text("${snapshot.data![index].artist}"),
+                      ),
                     );
-                  } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          padding: const EdgeInsets.all(10),
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          child: ListTile(
-                            onTap: () {
-                              // Play Song
-                              playSong(snapshot.data![index].uri, _AudioPlayer);
-                            },
-                            tileColor: Colors.purple.shade800,
-                            leading: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.music_note_outlined),
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.abc),
-                            ),
-                            title: Text(snapshot.data![index].displayNameWOExt),
-                            subtitle: Text("${snapshot.data![index].artist}"),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                }
+                  },
+                );
               }
             }
-            return Text("Nothing");
-          },
-        ),
-      ),
+          }
+        }
+        return Text("Nothing");
+      },
     );
   }
 }

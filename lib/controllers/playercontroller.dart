@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PlayxController extends GetxController {
   final AudioQueryx = OnAudioQuery();
+  final _AudioPlayer = AudioPlayer();
+  final SearchController = TextEditingController();
 
   @override
   void onInit() {
@@ -28,7 +32,15 @@ class PlayxController extends GetxController {
         await AudioQueryx.permissionsRequest();
       }
     }
+  }
 
-    Future.delayed(Duration(seconds: 10));
+  void playSong(String? uri) {
+    try {
+      //We play the Audio Here.
+      _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+      _AudioPlayer.play();
+    } on Exception catch (e) {
+      print(e.toString());
+    }
   }
 }
