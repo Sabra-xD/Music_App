@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_app/constants/textstyle.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../controllers/playercontroller.dart';
@@ -17,14 +18,11 @@ class HomeScreen extends StatelessWidget {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-            Colors.deepPurple.shade800.withOpacity(0.8),
-            Colors.deepPurple.shade200.withOpacity(0.8)
-          ])),
+              colors: [Colors.purple.shade800, Colors.purple.shade200])),
       child: Scaffold(
           appBar: _customAppBar(),
           backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
+          body: Container(
             child: Column(
               children: [
                 Padding(
@@ -57,11 +55,12 @@ class HomeScreen extends StatelessWidget {
                         )),
                   ),
                 ),
-                Text("Songs list"),
-                ClipRRect(
-                  child: SizedBox(
-                      height: MediaQuery.of(context).size.height * .7,
-                      child: ListSongs()),
+                const Text("Songs list"),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                Expanded(
+                  child: ListSongs(),
                 )
               ],
             ),
@@ -80,8 +79,11 @@ class HomeScreen extends StatelessWidget {
       builder: (context, snapshot) {
         print(snapshot.data);
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                width: MediaQuery.of(context).size.height * 0.5,
+                child: const CircularProgressIndicator()),
           );
         } else {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -95,18 +97,17 @@ class HomeScreen extends StatelessWidget {
                   child: Text("No Songs found"),
                 );
               } else {
-                return SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        padding: const EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                        ),
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: EdgeInsets.all(5),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Card(
+                        margin: EdgeInsets.all(5),
                         child: ListTile(
                           onTap: () {
                             // Play Song
@@ -115,18 +116,30 @@ class HomeScreen extends StatelessWidget {
                           tileColor: Colors.purple.shade800,
                           leading: IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.music_note_outlined),
+                            icon: const Icon(
+                              Icons.music_note_outlined,
+                              color: Colors.white,
+                            ),
                           ),
                           trailing: IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.abc),
+                            icon: const Icon(
+                              Icons.play_arrow,
+                              color: Colors.white,
+                            ),
                           ),
-                          title: Text(snapshot.data![index].displayNameWOExt),
-                          subtitle: Text("${snapshot.data![index].artist}"),
+                          title: Text(
+                            snapshot.data![index].displayNameWOExt,
+                            style: SongStyle(),
+                          ),
+                          subtitle:
+                              (snapshot.data![index].artist == "<unknown>")
+                                  ? null
+                                  : Text("${snapshot.data![index].artist}"),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               }
             }

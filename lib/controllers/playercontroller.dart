@@ -43,4 +43,14 @@ class PlayxController extends GetxController {
       print(e.toString());
     }
   }
+
+  Text checkSinger(AsyncSnapshot<List<SongModel>> snapshot, int index) {
+    print(snapshot.data![index].artist);
+    print("Xxxxxxxxxxxxx");
+    if (snapshot.data![index].artist != "<unknown>") {
+      return Text("${snapshot.data![index].artist}");
+    } else {
+      return Text("dawdad");
+    }
+  }
 }
