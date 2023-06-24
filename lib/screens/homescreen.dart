@@ -18,52 +18,65 @@ class HomeScreen extends StatelessWidget {
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.purple.shade800, Colors.purple.shade200])),
+              colors: [Colors.purple.shade900, Colors.purple.shade200])),
       child: Scaffold(
           appBar: _customAppBar(),
           backgroundColor: Colors.transparent,
-          body: Container(
-            child: Column(
-              children: [
-                Padding(
+          body: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Welcome"),
+                      Text(
+                        "Welcome",
+                        style: OurStyle(),
+                      ),
                       Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Text("Enjoy your Music!"),
+                        margin: const EdgeInsets.only(top: 10),
+                        child: Text("Enjoy your Music!",
+                            style: OurStyle(fontSize: 18)),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.75,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.white),
-                  child: TextField(
-                    style: const TextStyle(color: Colors.grey),
-                    controller: controller.SearchController,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Search",
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        )),
-                  ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white),
+                child: TextField(
+                  style: const TextStyle(color: Colors.grey),
+                  controller: controller.SearchController,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Search",
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                      )),
                 ),
-                const Text("Songs list"),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                Expanded(
-                  child: ListSongs(),
-                )
-              ],
-            ),
+              ),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      "Songs list",
+                      style: OurStyle(fontSize: 18),
+                    ),
+                  )),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              Expanded(
+                child: ListSongs(),
+              )
+            ],
           )),
     );
   }
@@ -73,11 +86,10 @@ class HomeScreen extends StatelessWidget {
       future: controller.AudioQueryx.querySongs(
         ignoreCase: true,
         orderType: OrderType.ASC_OR_SMALLER,
-        sortType: null,
-        uriType: UriType.EXTERNAL,
+        sortType: SongSortType.DATE_ADDED,
+        uriType: UriType.values.first,
       ),
       builder: (context, snapshot) {
-        print(snapshot.data);
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: SizedBox(
@@ -97,45 +109,57 @@ class HomeScreen extends StatelessWidget {
                   child: Text("No Songs found"),
                 );
               } else {
+                List<SongModel> Songs = snapshot.data!;
+
+                controller.removeRecordingandOrder(Songs);
+
                 return ListView.builder(
-                  itemCount: snapshot.data!.length,
+                  itemCount: Songs.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.6,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Card(
-                        margin: EdgeInsets.all(5),
-                        child: ListTile(
-                          onTap: () {
-                            // Play Song
-                            controller.playSong(snapshot.data![index].uri);
-                          },
-                          tileColor: Colors.purple.shade800,
-                          leading: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.music_note_outlined,
-                              color: Colors.white,
+                        child: Obx(
+                          () => ListTile(
+                            onTap: () {
+                              // Play Song
+                              controller.playSong(Songs[index].uri, index);
+                            },
+                            // ignore: unrelated_type_equality_checks
+                            tileColor: controller.playIndex == index &&
+                                    controller.isPlaying.value
+                                ? Colors.indigo.shade400
+                                : Colors.purple.shade800,
+                            leading: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.music_note_outlined,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
+                            trailing: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.play_arrow,
+                                color: Colors.white,
+                              ),
                             ),
+                            title: Text(
+                              Songs[index].displayNameWOExt,
+                              style: SongStyle(),
+                            ),
+                            subtitle: (Songs[index].artist == "<unknown>")
+                                ? null
+                                : Text(
+                                    "${Songs[index].artist}",
+                                    style: SongStyle(),
+                                  ),
                           ),
-                          title: Text(
-                            snapshot.data![index].displayNameWOExt,
-                            style: SongStyle(),
-                          ),
-                          subtitle:
-                              (snapshot.data![index].artist == "<unknown>")
-                                  ? null
-                                  : Text("${snapshot.data![index].artist}"),
                         ),
                       ),
                     );

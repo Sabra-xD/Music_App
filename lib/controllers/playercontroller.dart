@@ -9,7 +9,8 @@ class PlayxController extends GetxController {
   final AudioQueryx = OnAudioQuery();
   final _AudioPlayer = AudioPlayer();
   final SearchController = TextEditingController();
-
+  var isPlaying = false.obs;
+  var playIndex = 0.obs;
   @override
   void onInit() {
     //Triggered when initialized
@@ -18,11 +19,6 @@ class PlayxController extends GetxController {
   }
 
   void checkPermission() async {
-    // var perm = await Permission.storage.request();
-
-    print("Checking permission");
-    // AudioQueryx.permissionsStatus();
-    print(kIsWeb);
     if (!kIsWeb) {
       print(AudioQueryx.permissionsStatus());
       bool permissionStatus = await AudioQueryx.permissionsRequest();
@@ -34,23 +30,19 @@ class PlayxController extends GetxController {
     }
   }
 
-  void playSong(String? uri) {
+  void playSong(String? uri, index) {
     try {
-      //We play the Audio Here.
       _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
       _AudioPlayer.play();
+      playIndex.value = index;
+      isPlaying(true);
     } on Exception catch (e) {
       print(e.toString());
     }
   }
 
-  Text checkSinger(AsyncSnapshot<List<SongModel>> snapshot, int index) {
-    print(snapshot.data![index].artist);
-    print("Xxxxxxxxxxxxx");
-    if (snapshot.data![index].artist != "<unknown>") {
-      return Text("${snapshot.data![index].artist}");
-    } else {
-      return Text("dawdad");
-    }
+  void removeRecordingandOrder(List<SongModel> Songs) {
+    Songs.removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
+    Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
   }
 }
