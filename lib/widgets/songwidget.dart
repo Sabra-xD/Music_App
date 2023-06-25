@@ -122,7 +122,7 @@ BoxDecoration gradientBackground() {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-        Colors.purple.shade200,
+        Colors.purple.shade300,
         Colors.purple.shade900,
       ]));
 }

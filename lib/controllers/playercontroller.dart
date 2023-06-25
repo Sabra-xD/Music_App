@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,11 +20,19 @@ class PlayxController extends GetxController {
   var maxDuration = 0.0.obs;
   var value = 0.0.obs;
   bool wasPaused = false;
+  int count = 0;
+  var mode = true.obs; //Mode true then normal false then shuffle
+
+  final playedSongs = <dynamic>[];
+  final playedSongsIndex = <dynamic>[];
   @override
   void onInit() {
-    //Triggered when initialized
     checkPermission();
     super.onInit();
+  }
+
+  void changeMode() {
+    mode.value = !mode.value;
   }
 
   // ignore: non_constant_identifier_names
@@ -30,9 +40,15 @@ class PlayxController extends GetxController {
     _AudioPlayer.playerStateStream.listen((event) {
       if (event.processingState == ProcessingState.completed) {
         wasPaused = false;
-        int newSong = index + 1;
-        playIndex.value = newSong;
-        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        if (mode.value) {
+          int newSong = index + 1;
+          playIndex.value = newSong;
+          playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        } else {
+          final random = Random();
+          playIndex.value = random.nextInt(SongsList.length);
+          playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        }
       }
     });
   }
@@ -40,12 +56,35 @@ class PlayxController extends GetxController {
 //IF ID is 0 Then play previous song if ID is 1 then play next Song
   void playPreviousOrNextSong(List<SongModel> SongsList, int ID) {
     if (ID == 0) {
-      playIndex.value = playIndex.value - 1;
-      playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+      if (mode.value) {
+        playIndex.value = playIndex.value - 1;
+        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+      } else {
+        var uri = playedSongs.last;
+        int index = playedSongsIndex.last;
+        print(index);
+        print(playedSongsIndex.length);
+        print(playedSongsIndex);
+        playIndex.value = index;
+        print(playIndex.value);
+        playSong(uri, index, SongsList);
+        playedSongs.removeLast();
+        playedSongsIndex.removeLast();
+      }
+      wasPaused = false;
     }
     if (ID == 1) {
-      playIndex.value = playIndex.value + 1;
-      playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+      if (mode.value) {
+        playIndex.value = playIndex.value + 1;
+        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        wasPaused = false;
+      } else {
+        //Choosing the Index or Song at random
+        final random = Random();
+        playIndex.value = random.nextInt(SongsList.length);
+        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        wasPaused = false;
+      }
     }
   }
 
@@ -79,6 +118,8 @@ class PlayxController extends GetxController {
     try {
       if (!wasPaused) {
         _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+        playedSongs.add(uri);
+        playedSongsIndex.add(index);
       }
 
       _AudioPlayer.play();

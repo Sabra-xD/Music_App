@@ -27,7 +27,7 @@ class playerScreen extends StatelessWidget {
         body: Stack(
           children: [
             Image.network(
-              'https://th.bing.com/th/id/R.fa5042937e4631dc0611b1c61a826298?rik=oZSG%2bU67VYmxHw&riu=http%3a%2f%2fwallpapercave.com%2fwp%2f06TYEbJ.jpg&ehk=%2fqnCDek4ehvhUyMJl35lveaphIoww%2bI0XNXQ4zZsKhA%3d&risl=&pid=ImgRaw&r=0',
+              "https://th.bing.com/th/id/OIP.kFl7NS4EWbzpiF0p2upUEAHaNK?pid=ImgDet&rs=1",
               fit: BoxFit.cover,
             ),
             ShaderMask(
@@ -37,8 +37,8 @@ class playerScreen extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.white,
-                      Colors.white.withOpacity(0.5),
-                      Colors.white.withOpacity(0.0)
+                      Colors.white.withOpacity(0.2),
+                      Colors.white.withOpacity(0.05)
                     ],
                     stops: const [
                       0.0,
@@ -53,106 +53,150 @@ class playerScreen extends StatelessWidget {
             ),
             Obx(
               () => Container(
-                padding: EdgeInsets.all(5),
-                child: Column(children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        controller.position.value,
-                        style: OurStyle(),
-                      ),
-                      Expanded(
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                              trackHeight: 4,
-                              thumbShape: const RoundSliderThumbShape(
-                                disabledThumbRadius: 4,
-                                enabledThumbRadius: 4,
-                              ),
-                              overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 10,
-                              ),
-                              activeTrackColor: Colors.white.withOpacity(0.2),
-                              inactiveTrackColor: Colors.white,
-                              thumbColor: Colors.white,
-                              overlayColor: Colors.white),
-                          child: Slider(
-                            min: 0.0,
-                            max: controller.maxDuration.value,
-                            value: controller.value.value,
-                            onChanged: (double newValue) {
-                              controller.changePosition(newValue.toInt());
-                              newValue = newValue;
-                            },
-                          ),
-                        ),
-                      ),
-                      Text(controller.duration.value),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                  ),
-                  Row(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            //Jump to previous song
-                            //ID is 0 so we play PREVIOUS SONG
-                            controller.playPreviousOrNextSong(SongsList, 0);
-                          },
-                          icon: const Icon(
-                            Icons.skip_previous,
-                            color: Colors.white,
-                            size: 35,
-                          )),
-                      ClipOval(
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          color: Colors.white,
-                          child: IconButton(
+                      Row(
+                        children: [
+                          IconButton(
                               onPressed: () {
-                                if (controller.isPlaying.value == false) {
-                                  controller.playSong(
-                                      Song.uri, index, SongsList);
-                                } else {
-                                  controller.pauseSong();
-                                }
+                                controller.changeMode();
                               },
-                              icon: controller.isPlaying.value
-                                  ? Icon(
-                                      Icons.pause,
-                                      color: Colors.purple.shade800
-                                          .withOpacity(0.8),
-                                      size: 55,
-                                    )
-                                  : Icon(
+                              icon: controller.mode.value
+                                  ? const Icon(
                                       Icons.play_arrow,
-                                      color: Colors.purple.shade800
-                                          .withOpacity(0.8),
-                                      size: 55,
-                                    )),
+                                      color: Colors.white,
+                                    )
+                                  : const Icon(
+                                      Icons.shuffle,
+                                      color: Colors.white70,
+                                    ))
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          children: [
+                            Text(
+                              SongsList[controller.playIndex.value]
+                                  .displayNameWOExt,
+                              style: OurStyle(fontSize: 16),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Song.artist == "<unknown>"
+                                ? const Text('')
+                                : Text(
+                                    "${SongsList[controller.playIndex.value].artist}")
+                          ],
                         ),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            //Jump to next song
-                            //ID IS 1 to Play Next Song
-                            controller.playPreviousOrNextSong(SongsList, 1);
-                          },
-                          icon: const Icon(
-                            Icons.skip_next,
-                            color: Colors.white,
-                            size: 35,
-                          )),
-                    ],
-                  )
-                ]),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            controller.position.value,
+                            style: OurStyle(),
+                          ),
+                          Expanded(
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 4,
+                                  thumbShape: const RoundSliderThumbShape(
+                                    disabledThumbRadius: 4,
+                                    enabledThumbRadius: 4,
+                                  ),
+                                  overlayShape: const RoundSliderOverlayShape(
+                                    overlayRadius: 10,
+                                  ),
+                                  activeTrackColor:
+                                      Colors.white.withOpacity(0.2),
+                                  inactiveTrackColor: Colors.white,
+                                  thumbColor: Colors.white,
+                                  overlayColor: Colors.white),
+                              child: Slider(
+                                min: 0.0,
+                                max: controller.maxDuration.value,
+                                value: controller.value.value,
+                                onChanged: (double newValue) {
+                                  controller.changePosition(newValue.toInt());
+                                  newValue = newValue;
+                                },
+                              ),
+                            ),
+                          ),
+                          Text(controller.duration.value),
+                        ],
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                //Jump to previous song
+                                //ID is 0 so we play PREVIOUS SONG
+                                controller.playPreviousOrNextSong(SongsList, 0);
+                              },
+                              icon: const Icon(
+                                Icons.skip_previous,
+                                color: Colors.white,
+                                size: 35,
+                              )),
+                          ClipOval(
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              color: Colors.white,
+                              child: IconButton(
+                                  onPressed: () {
+                                    if (controller.isPlaying.value == false) {
+                                      controller.playSong(
+                                          Song.uri, index, SongsList);
+                                    } else {
+                                      controller.pauseSong();
+                                    }
+                                  },
+                                  icon: controller.isPlaying.value
+                                      ? Icon(
+                                          Icons.pause,
+                                          color: Colors.purple.shade800
+                                              .withOpacity(0.8),
+                                          size: 55,
+                                        )
+                                      : Icon(
+                                          Icons.play_arrow,
+                                          color: Colors.purple.shade800
+                                              .withOpacity(0.8),
+                                          size: 55,
+                                        )),
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                //Jump to next song
+                                //ID IS 1 to Play Next Song
+                                controller.playPreviousOrNextSong(SongsList, 1);
+                              },
+                              icon: const Icon(
+                                Icons.skip_next,
+                                color: Colors.white,
+                                size: 35,
+                              )),
+                        ],
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                      )
+                    ]),
               ),
             )
           ],
