@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_app/constants/textstyle.dart';
 import 'package:music_app/controllers/playercontroller.dart';
 import 'package:music_app/widgets/songwidget.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 // ignore: camel_case_types
 class playerScreen extends StatelessWidget {
-  playerScreen({super.key});
+  final SongModel Song;
+  final int index;
+  final List<SongModel> SongsList;
+  playerScreen(
+      {super.key,
+      required this.Song,
+      required this.index,
+      required this.SongsList});
   //Finding the Controller
-  // PlayxController controller = Get.find<PlayxController>();
+
+  PlayxController controller = Get.find<PlayxController>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,34 +51,87 @@ class playerScreen extends StatelessWidget {
                 decoration: gradientBackground(),
               ),
             ),
-            Row(
-              children: [
-                Text(
-                  "0:0",
-                ),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                        trackHeight: 4,
-                        thumbShape: const RoundSliderThumbShape(
-                          disabledThumbRadius: 4,
-                          enabledThumbRadius: 4,
-                        ),
-                        overlayShape: const RoundSliderOverlayShape(
-                          overlayRadius: 10,
-                        ),
-                        activeTrackColor: Colors.white.withOpacity(0.2),
-                        inactiveTrackColor: Colors.white,
-                        thumbColor: Colors.white,
-                        overlayColor: Colors.white),
-                    child: Slider(
-                      value: 0.1,
-                      onChanged: (double value) {},
-                    ),
+            Obx(
+              () => Container(
+                padding: EdgeInsets.all(5),
+                child: Column(children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
                   ),
-                ),
-                Text("4:00")
-              ],
+                  Row(
+                    children: [
+                      Text(
+                        controller.position.value,
+                        style: OurStyle(),
+                      ),
+                      Expanded(
+                        child: SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                              trackHeight: 4,
+                              thumbShape: const RoundSliderThumbShape(
+                                disabledThumbRadius: 4,
+                                enabledThumbRadius: 4,
+                              ),
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 10,
+                              ),
+                              activeTrackColor: Colors.white.withOpacity(0.2),
+                              inactiveTrackColor: Colors.white,
+                              thumbColor: Colors.white,
+                              overlayColor: Colors.white),
+                          child: Slider(
+                            min: 0.0,
+                            max: controller.maxDuration.value,
+                            value: controller.value.value,
+                            onChanged: (double newValue) {
+                              controller.changePosition(newValue.toInt());
+                              newValue = newValue;
+                            },
+                          ),
+                        ),
+                      ),
+                      Text(controller.duration.value),
+                    ],
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClipOval(
+                        child: Container(
+                          width: 70,
+                          height: 70,
+                          color: Colors.white,
+                          child: IconButton(
+                              onPressed: () {
+                                if (controller.isPlaying.value == false) {
+                                  controller.playSong(
+                                      Song.uri, index, SongsList);
+                                } else {
+                                  controller.pauseSong();
+                                }
+                              },
+                              icon: controller.isPlaying.value
+                                  ? Icon(
+                                      Icons.pause,
+                                      color: Colors.purple.shade800
+                                          .withOpacity(0.8),
+                                      size: 55,
+                                    )
+                                  : Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.purple.shade800
+                                          .withOpacity(0.8),
+                                      size: 55,
+                                    )),
+                        ),
+                      )
+                    ],
+                  )
+                ]),
+              ),
             )
           ],
         ),

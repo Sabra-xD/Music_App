@@ -11,6 +11,12 @@ class PlayxController extends GetxController {
   final SearchController = TextEditingController();
   var isPlaying = false.obs;
   var playIndex = 0.obs;
+
+  var duration = ''.obs;
+  var position = ''.obs;
+
+  var maxDuration = 0.0.obs;
+  var value = 0.0.obs;
   @override
   void onInit() {
     //Triggered when initialized
@@ -18,24 +24,49 @@ class PlayxController extends GetxController {
     super.onInit();
   }
 
+  void eventListener(index, List<SongModel> SongsList) {
+    _AudioPlayer.playerStateStream.listen((event) {
+      if (event.processingState == ProcessingState.completed) {
+        int newSong = index + 1;
+        playIndex.value = newSong;
+        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+      }
+    });
+  }
+
+  void changePosition(seconds) {
+    var newPositon = Duration(seconds: seconds);
+    _AudioPlayer.seek(newPositon);
+  }
+
+  void updatePositon() {
+    _AudioPlayer.durationStream.listen((d) {
+      duration.value = d.toString().split(".")[0];
+      maxDuration.value = d!.inSeconds.toDouble();
+    });
+    _AudioPlayer.positionStream.listen((p) {
+      position.value = p.toString().split(".")[0];
+      value.value = p.inSeconds.toDouble();
+    });
+  }
+
   void checkPermission() async {
     if (!kIsWeb) {
-      print(AudioQueryx.permissionsStatus());
       bool permissionStatus = await AudioQueryx.permissionsRequest();
-
-      print(permissionStatus);
       if (!permissionStatus) {
         await AudioQueryx.permissionsRequest();
       }
     }
   }
 
-  void playSong(String? uri, index) {
+  void playSong(String? uri, index, List<SongModel> SongsList) {
     try {
       _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
       _AudioPlayer.play();
       playIndex.value = index;
       isPlaying(true);
+      updatePositon();
+      eventListener(index, SongsList);
     } on Exception catch (e) {
       print(e.toString());
     }

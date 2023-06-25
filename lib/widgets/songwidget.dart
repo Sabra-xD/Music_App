@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_app/screens/playerScreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../constants/textstyle.dart';
@@ -51,7 +52,12 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
                         () => ListTile(
                           onTap: () {
                             // Play Song
-                            controller.playSong(Songs[index].uri, index);
+                            // controller.playSong(Songs[index].uri, index);
+                            Get.to(playerScreen(
+                              Song: Songs[index],
+                              index: index,
+                              SongsList: Songs,
+                            ));
                           },
                           // ignore: unrelated_type_equality_checks
                           tileColor: controller.playIndex == index &&
@@ -69,6 +75,9 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
                             onPressed: () {
                               if (controller.isPlaying.value) {
                                 controller.pauseSong();
+                                controller.isPlaying.value = false;
+                              } else {
+                                controller.playSong(Songs[index].uri, index);
                               }
                             },
                             icon: controller.playIndex == index &&
@@ -112,5 +121,8 @@ BoxDecoration gradientBackground() {
       gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.purple.shade900, Colors.purple.shade200]));
+          colors: [
+        Colors.purple.shade200,
+        Colors.purple.shade900,
+      ]));
 }
