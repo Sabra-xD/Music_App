@@ -66,11 +66,21 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
                             ),
                           ),
                           trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                            ),
+                            onPressed: () {
+                              if (controller.isPlaying.value) {
+                                controller.pauseSong();
+                              }
+                            },
+                            icon: controller.playIndex == index &&
+                                    controller.isPlaying.value
+                                ? const Icon(
+                                    Icons.pause,
+                                    color: Colors.white,
+                                  )
+                                : const Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                  ),
                           ),
                           title: Text(
                             Songs[index].displayNameWOExt,
@@ -95,4 +105,12 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
       return Text("Nothing");
     },
   );
+}
+
+BoxDecoration gradientBackground() {
+  return BoxDecoration(
+      gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.purple.shade900, Colors.purple.shade200]));
 }

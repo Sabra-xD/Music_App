@@ -41,6 +41,13 @@ class PlayxController extends GetxController {
     }
   }
 
+  Future<void> pauseSong() async {
+    if (isPlaying.value) {
+      await _AudioPlayer.pause();
+      isPlaying.value = false;
+    }
+  }
+
   void removeRecordingandOrder(List<SongModel> Songs) {
     Songs.removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
     Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
