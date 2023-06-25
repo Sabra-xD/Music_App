@@ -99,6 +99,17 @@ class playerScreen extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      IconButton(
+                          onPressed: () {
+                            //Jump to previous song
+                            //ID is 0 so we play PREVIOUS SONG
+                            controller.playPreviousOrNextSong(SongsList, 0);
+                          },
+                          icon: const Icon(
+                            Icons.skip_previous,
+                            color: Colors.white,
+                            size: 35,
+                          )),
                       ClipOval(
                         child: Container(
                           width: 70,
@@ -127,7 +138,18 @@ class playerScreen extends StatelessWidget {
                                       size: 55,
                                     )),
                         ),
-                      )
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            //Jump to next song
+                            //ID IS 1 to Play Next Song
+                            controller.playPreviousOrNextSong(SongsList, 1);
+                          },
+                          icon: const Icon(
+                            Icons.skip_next,
+                            color: Colors.white,
+                            size: 35,
+                          )),
                     ],
                   )
                 ]),

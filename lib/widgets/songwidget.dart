@@ -51,8 +51,8 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
                       child: Obx(
                         () => ListTile(
                           onTap: () {
-                            // Play Song
-                            // controller.playSong(Songs[index].uri, index);
+                            // Play Song & Navigate to PlayScreen
+                            controller.playSong(Songs[index].uri, index, Songs);
                             Get.to(playerScreen(
                               Song: Songs[index],
                               index: index,

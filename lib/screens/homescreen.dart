@@ -13,11 +13,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.purple.shade900, Colors.purple.shade200])),
+      decoration: gradientBackground(),
       child: Scaffold(
           appBar: _customAppBar(),
           backgroundColor: Colors.transparent,

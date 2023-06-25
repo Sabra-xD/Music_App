@@ -17,6 +17,7 @@ class PlayxController extends GetxController {
 
   var maxDuration = 0.0.obs;
   var value = 0.0.obs;
+  bool wasPaused = false;
   @override
   void onInit() {
     //Triggered when initialized
@@ -24,14 +25,28 @@ class PlayxController extends GetxController {
     super.onInit();
   }
 
+  // ignore: non_constant_identifier_names
   void eventListener(index, List<SongModel> SongsList) {
     _AudioPlayer.playerStateStream.listen((event) {
       if (event.processingState == ProcessingState.completed) {
+        wasPaused = false;
         int newSong = index + 1;
         playIndex.value = newSong;
         playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
       }
     });
+  }
+
+//IF ID is 0 Then play previous song if ID is 1 then play next Song
+  void playPreviousOrNextSong(List<SongModel> SongsList, int ID) {
+    if (ID == 0) {
+      playIndex.value = playIndex.value - 1;
+      playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+    }
+    if (ID == 1) {
+      playIndex.value = playIndex.value + 1;
+      playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+    }
   }
 
   void changePosition(seconds) {
@@ -59,12 +74,17 @@ class PlayxController extends GetxController {
     }
   }
 
+  // ignore: non_constant_identifier_names
   void playSong(String? uri, index, List<SongModel> SongsList) {
     try {
-      _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+      if (!wasPaused) {
+        _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+      }
+
       _AudioPlayer.play();
       playIndex.value = index;
       isPlaying(true);
+      wasPaused = false;
       updatePositon();
       eventListener(index, SongsList);
     } on Exception catch (e) {
@@ -76,6 +96,7 @@ class PlayxController extends GetxController {
     if (isPlaying.value) {
       await _AudioPlayer.pause();
       isPlaying.value = false;
+      wasPaused = true;
     }
   }
 
