@@ -45,6 +45,10 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.white),
                 child: TextField(
+                  onChanged: (text) {
+                    controller.removeRecordingandOrder(
+                        controller.readSongsList.value, _searchController);
+                  }, //Add the search function here so that it is
                   style: const TextStyle(color: Colors.grey),
                   controller: controller.SearchController,
                   decoration: const InputDecoration(
@@ -69,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
               Expanded(
-                child: ListSongs(controller),
+                child: ListSongs(controller, _searchController),
               )
             ],
           )),

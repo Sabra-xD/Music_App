@@ -4,8 +4,11 @@ import 'package:music_app/screens/playerScreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import '../constants/textstyle.dart';
+import '../controllers/playercontroller.dart';
 
-FutureBuilder<List<SongModel>> ListSongs(controller) {
+// ignore: non_constant_identifier_names
+FutureBuilder<List<SongModel>> ListSongs(
+    PlayxController controller, TextEditingController searchController) {
   return FutureBuilder<List<SongModel>>(
     future: controller.AudioQueryx.querySongs(
       ignoreCase: true,
@@ -35,31 +38,34 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
             } else {
               List<SongModel> Songs = snapshot.data!;
 
-              controller.removeRecordingandOrder(Songs);
+              controller.removeRecordingandOrder(Songs, searchController);
+              controller.readSongsList.value = Songs;
 
-              return ListView.builder(
-                itemCount: Songs.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: songListPadding(),
-                    margin: const EdgeInsets.all(5),
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Card(
-                      child: Obx(
-                        () => ListTile(
+              return Obx(
+                () => ListView.builder(
+                  itemCount: controller.readSongsList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: songListPadding(),
+                      margin: const EdgeInsets.all(5),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Card(
+                        child: ListTile(
                           onTap: () {
                             // Play Song & Navigate to PlayScreen
-                            controller.playSong(Songs[index].uri, index, Songs);
-                            Get.to(playerScreen(
-                              Song: Songs[index],
-                              index: index,
-                              SongsList: Songs,
-                            ));
+                            // controller.playSong(
+                            //     controller.readSongsList[index].uri,
+                            //     index,
+                            //     controller.readSongsList.value);
+                            // Get.to(playerScreen(
+                            //   Song: controller.readSongsList[index],
+                            //   index: index,
+                            //   SongsList: controller.readSongsList,
+                            // ));
                           },
-                          // ignore: unrelated_type_equality_checks
                           tileColor: controller.playIndex == index &&
                                   controller.isPlaying.value
                               ? Colors.indigo.shade400
@@ -77,7 +83,10 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
                                 controller.pauseSong();
                                 controller.isPlaying.value = false;
                               } else {
-                                controller.playSong(Songs[index].uri, index);
+                                // controller.playSong(
+                                //     controller.readSongsList[index].uri,
+                                //     index,
+                                //     controller.readSongsList);
                               }
                             },
                             icon: controller.playIndex == index &&
@@ -92,26 +101,27 @@ FutureBuilder<List<SongModel>> ListSongs(controller) {
                                   ),
                           ),
                           title: Text(
-                            Songs[index].displayNameWOExt,
+                            controller.readSongsList[index].displayNameWOExt,
                             style: SongStyle(),
                           ),
-                          subtitle: (Songs[index].artist == "<unknown>")
+                          subtitle: (controller.readSongsList[index].artist ==
+                                  "<unknown>")
                               ? null
                               : Text(
-                                  "${Songs[index].artist}",
+                                  "${controller.readSongsList[index].artist}",
                                   style: SongStyle(),
                                 ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             }
           }
         }
       }
-      return Text("Nothing");
+      return const Text("Nothing");
     },
   );
 }

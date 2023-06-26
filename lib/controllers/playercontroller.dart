@@ -22,7 +22,9 @@ class PlayxController extends GetxController {
   bool wasPaused = false;
   int count = 0;
   var mode = true.obs; //Mode true then normal false then shuffle
-
+  // late List<SongModel> readSongsList = [];
+  var readSongsList = [].obs;
+  // RxList<SongModel> readSongsList = <SongModel>[].obs;
   final playedSongs = <dynamic>[];
   final playedSongsIndex = <dynamic>[];
   @override
@@ -62,12 +64,9 @@ class PlayxController extends GetxController {
       } else {
         var uri = playedSongs.last;
         int index = playedSongsIndex.last;
-        print(index);
-        print(playedSongsIndex.length);
-        print(playedSongsIndex);
+
         playIndex.value = index;
-        print(playIndex.value);
-        playSong(uri, index, SongsList);
+
         playedSongs.removeLast();
         playedSongsIndex.removeLast();
       }
@@ -141,8 +140,26 @@ class PlayxController extends GetxController {
     }
   }
 
-  void removeRecordingandOrder(List<SongModel> Songs) {
+  int getSongsListCount(List<SongModel> Songs) {
+    return Songs.length;
+  }
+
+  void removeRecordingandOrder(var Songs, TextEditingController search) {
     Songs.removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
+    print(Songs.length);
+    print(search.text);
+    Songs = Songs.where((Songs) => Songs.displayNameWOExt.contains("After"))
+        .toList();
+    if (search.text.isNotEmpty) {
+      //Here we should find the songs that start with certain words.
+      Songs = Songs.where((str) =>
+              str.displayNameWOExt.toLowerCase().contains(RegExp("weekend")))
+          .toList();
+    }
+    print(Songs.length);
+
     Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
+    readSongsList.value = Songs;
+    print(readSongsList.length);
   }
 }
