@@ -22,8 +22,9 @@ class PlayxController extends GetxController {
   bool wasPaused = false;
   int count = 0;
   var mode = true.obs; //Mode true then normal false then shuffle
-  // late List<SongModel> readSongsList = [];
-  var readSongsList = [].obs;
+  final readSongsList = <SongModel>[].obs;
+
+  final savedSongsList = <SongModel>[].obs;
   // RxList<SongModel> readSongsList = <SongModel>[].obs;
   final playedSongs = <dynamic>[];
   final playedSongsIndex = <dynamic>[];
@@ -144,22 +145,33 @@ class PlayxController extends GetxController {
     return Songs.length;
   }
 
-  void removeRecordingandOrder(var Songs, TextEditingController search) {
+  void removeRecordingandOrder(List<SongModel> Songs) {
     Songs.removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
-    print(Songs.length);
-    print(search.text);
-    Songs = Songs.where((Songs) => Songs.displayNameWOExt.contains("After"))
-        .toList();
-    if (search.text.isNotEmpty) {
-      //Here we should find the songs that start with certain words.
-      Songs = Songs.where((str) =>
-              str.displayNameWOExt.toLowerCase().contains(RegExp("weekend")))
-          .toList();
-    }
-    print(Songs.length);
 
     Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
+    print("Returned Songs Length : ${Songs.length}");
+  }
+
+  void search(List<SongModel> Songs, String search) {
+    savedSongsList
+        .removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
+    Songs = savedSongsList;
+    if (search != '') {
+      //Here we should find the songs that start with certain words.
+
+      print("SEARCHING .....");
+      Songs = Songs.where((str) => str.title.toLowerCase().contains(search))
+          .toList();
+
+      print("Searched songs list: ${Songs.length}");
+    } else {
+      print("NOT SEARCHING!.....");
+      savedSongsList
+          .removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
+      Songs = savedSongsList;
+      print("Saved Songs list: ${Songs.length}");
+    }
+    Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
     readSongsList.value = Songs;
-    print(readSongsList.length);
   }
 }

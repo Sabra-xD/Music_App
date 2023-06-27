@@ -46,11 +46,16 @@ class HomeScreen extends StatelessWidget {
                     color: Colors.white),
                 child: TextField(
                   onChanged: (text) {
-                    controller.removeRecordingandOrder(
-                        controller.readSongsList.value, _searchController);
+                    print("Search Text: ${text}");
+                    controller.search(
+                        controller.readSongsList, _searchController.text);
                   }, //Add the search function here so that it is
+                  onEditingComplete: () {
+                    controller.search(
+                        controller.readSongsList, _searchController.text);
+                  },
                   style: const TextStyle(color: Colors.grey),
-                  controller: controller.SearchController,
+                  controller: _searchController,
                   decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "Search",

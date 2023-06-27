@@ -37,13 +37,14 @@ FutureBuilder<List<SongModel>> ListSongs(
               );
             } else {
               List<SongModel> Songs = snapshot.data!;
-
-              controller.removeRecordingandOrder(Songs, searchController);
               controller.readSongsList.value = Songs;
+              controller.savedSongsList.value = Songs;
+              controller.removeRecordingandOrder(controller.readSongsList);
 
               return Obx(
                 () => ListView.builder(
-                  itemCount: controller.readSongsList.length,
+                  itemCount: controller
+                      .readSongsList.length, //Wee need this to change.
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       padding: songListPadding(),
@@ -56,15 +57,15 @@ FutureBuilder<List<SongModel>> ListSongs(
                         child: ListTile(
                           onTap: () {
                             // Play Song & Navigate to PlayScreen
-                            // controller.playSong(
-                            //     controller.readSongsList[index].uri,
-                            //     index,
-                            //     controller.readSongsList.value);
-                            // Get.to(playerScreen(
-                            //   Song: controller.readSongsList[index],
-                            //   index: index,
-                            //   SongsList: controller.readSongsList,
-                            // ));
+                            controller.playSong(
+                                controller.readSongsList[index].uri,
+                                index,
+                                controller.readSongsList);
+                            Get.to(playerScreen(
+                              Song: controller.readSongsList[index],
+                              index: index,
+                              SongsList: controller.readSongsList,
+                            ));
                           },
                           tileColor: controller.playIndex == index &&
                                   controller.isPlaying.value
@@ -83,10 +84,10 @@ FutureBuilder<List<SongModel>> ListSongs(
                                 controller.pauseSong();
                                 controller.isPlaying.value = false;
                               } else {
-                                // controller.playSong(
-                                //     controller.readSongsList[index].uri,
-                                //     index,
-                                //     controller.readSongsList);
+                                controller.playSong(
+                                    controller.readSongsList[index].uri,
+                                    index,
+                                    controller.readSongsList);
                               }
                             },
                             icon: controller.playIndex == index &&
@@ -102,6 +103,8 @@ FutureBuilder<List<SongModel>> ListSongs(
                           ),
                           title: Text(
                             controller.readSongsList[index].displayNameWOExt,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: SongStyle(),
                           ),
                           subtitle: (controller.readSongsList[index].artist ==
@@ -109,6 +112,8 @@ FutureBuilder<List<SongModel>> ListSongs(
                               ? null
                               : Text(
                                   "${controller.readSongsList[index].artist}",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: SongStyle(),
                                 ),
                         ),
