@@ -9,6 +9,8 @@ class HomeScreen extends StatelessWidget {
 
   final controller = Get.put(PlayxController());
   final _searchController = TextEditingController();
+  FocusNode _focusNode = FocusNode();
+  bool onItialize = true;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.white),
                 child: TextField(
+                  focusNode: _focusNode,
                   onChanged: (text) {
                     print("Search Text: ${text}");
                     controller.search(
@@ -53,6 +56,7 @@ class HomeScreen extends StatelessWidget {
                   onEditingComplete: () {
                     controller.search(
                         controller.readSongsList, _searchController.text);
+                    _focusNode.unfocus();
                   },
                   style: const TextStyle(color: Colors.grey),
                   controller: _searchController,
@@ -78,8 +82,23 @@ class HomeScreen extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
               Expanded(
-                child: ListSongs(controller, _searchController),
-              )
+                child: ListSongs(controller, controller.onInitailize.value),
+              ),
+              // Obx(
+              //   () => Container(
+              //     height: controller.isPlaying.value ? 50 : 0,
+              //     width: double.infinity,
+              //     color: Colors.black,
+              //     child: Column(
+              //       children: [
+              //         Text(
+              //           "Now Playing${controller.readSongsList[controller.playIndex.value].title} ",
+              //           style: OurStyle(),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // )
             ],
           )),
     );

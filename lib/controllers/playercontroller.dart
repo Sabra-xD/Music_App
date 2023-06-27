@@ -8,6 +8,8 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PlayxController extends GetxController {
+  final onInitailize = true.obs;
+
   final AudioQueryx = OnAudioQuery();
   final _AudioPlayer = AudioPlayer();
   final SearchController = TextEditingController();
@@ -124,6 +126,7 @@ class PlayxController extends GetxController {
 
       _AudioPlayer.play();
       playIndex.value = index;
+      print("Value of PlayIndex: ${playIndex}");
       isPlaying(true);
       wasPaused = false;
       updatePositon();
