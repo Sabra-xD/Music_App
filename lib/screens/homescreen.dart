@@ -84,21 +84,49 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: ListSongs(controller, controller.onInitailize.value),
               ),
-              // Obx(
-              //   () => Container(
-              //     height: controller.isPlaying.value ? 50 : 0,
-              //     width: double.infinity,
-              //     color: Colors.black,
-              //     child: Column(
-              //       children: [
-              //         Text(
-              //           "Now Playing${controller.readSongsList[controller.playIndex.value].title} ",
-              //           style: OurStyle(),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // )
+              Obx(
+                () => controller.isPlaying.value
+                    ? Container(
+                        padding: const EdgeInsets.only(top: 5),
+                        height: 100,
+                        width: double.infinity,
+                        color: Colors.black,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Now Playing:   ${controller.readSongsList[controller.playIndex.value].title} ",
+                              style: OurStyle(fontSize: 12),
+                            ),
+                            Expanded(
+                                child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 4,
+                                  thumbShape: const RoundSliderThumbShape(
+                                    disabledThumbRadius: 4,
+                                    enabledThumbRadius: 4,
+                                  ),
+                                  overlayShape: const RoundSliderOverlayShape(
+                                    overlayRadius: 0,
+                                  ),
+                                  activeTrackColor:
+                                      Colors.white.withOpacity(0.2),
+                                  inactiveTrackColor: Colors.white,
+                                  thumbColor: Colors.white,
+                                  overlayColor: Colors.white),
+                              child: Slider(
+                                  min: 0.0,
+                                  max: controller.maxDuration.value,
+                                  value: controller.value.value,
+                                  onChanged: (value) {}),
+                            )),
+                            controlButtons("HomeScreen", controller),
+                          ],
+                        ),
+                      )
+                    : const SizedBox(
+                        height: 0,
+                      ),
+              )
             ],
           )),
     );
@@ -111,7 +139,7 @@ AppBar _customAppBar() {
     backgroundColor: Colors.transparent,
     leading: IconButton(
       onPressed: () {},
-      icon: Icon(Icons.grid_view_rounded),
+      icon: const Icon(Icons.grid_view_rounded),
     ),
   );
 }

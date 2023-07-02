@@ -137,62 +137,7 @@ class playerScreen extends StatelessWidget {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                //Jump to previous song
-                                //ID is 0 so we play PREVIOUS SONG
-                                controller.playPreviousOrNextSong(SongsList, 0);
-                              },
-                              icon: const Icon(
-                                Icons.skip_previous,
-                                color: Colors.white,
-                                size: 35,
-                              )),
-                          ClipOval(
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              color: Colors.white,
-                              child: IconButton(
-                                  onPressed: () {
-                                    if (controller.isPlaying.value == false) {
-                                      controller.playSong(
-                                          Song.uri, index, SongsList);
-                                    } else {
-                                      controller.pauseSong();
-                                    }
-                                  },
-                                  icon: controller.isPlaying.value
-                                      ? Icon(
-                                          Icons.pause,
-                                          color: Colors.purple.shade800
-                                              .withOpacity(0.8),
-                                          size: 55,
-                                        )
-                                      : Icon(
-                                          Icons.play_arrow,
-                                          color: Colors.purple.shade800
-                                              .withOpacity(0.8),
-                                          size: 55,
-                                        )),
-                            ),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                //Jump to next song
-                                //ID IS 1 to Play Next Song
-                                controller.playPreviousOrNextSong(SongsList, 1);
-                              },
-                              icon: const Icon(
-                                Icons.skip_next,
-                                color: Colors.white,
-                                size: 35,
-                              )),
-                        ],
-                      ),
+                      controlButtons("PlayerScreen", controller),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.1,
                       )

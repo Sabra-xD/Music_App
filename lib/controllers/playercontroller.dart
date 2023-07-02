@@ -16,6 +16,8 @@ class PlayxController extends GetxController {
   var isPlaying = false.obs;
   var playIndex = 0.obs;
 
+  late int currentlyPlaying;
+
   var duration = ''.obs;
   var position = ''.obs;
 
@@ -41,29 +43,32 @@ class PlayxController extends GetxController {
   }
 
   // ignore: non_constant_identifier_names
-  void eventListener(index, List<SongModel> SongsList) {
+  void eventListener(index) {
     _AudioPlayer.playerStateStream.listen((event) {
       if (event.processingState == ProcessingState.completed) {
         wasPaused = false;
         if (mode.value) {
           int newSong = index + 1;
           playIndex.value = newSong;
-          playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+          playSong(readSongsList[playIndex.value].uri, playIndex.value,
+              readSongsList);
         } else {
           final random = Random();
-          playIndex.value = random.nextInt(SongsList.length);
-          playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+          playIndex.value = random.nextInt(readSongsList.length);
+          playSong(readSongsList[playIndex.value].uri, playIndex.value,
+              readSongsList);
         }
       }
     });
   }
 
 //IF ID is 0 Then play previous song if ID is 1 then play next Song
-  void playPreviousOrNextSong(List<SongModel> SongsList, int ID) {
+  void playPreviousOrNextSong(int ID) {
     if (ID == 0) {
       if (mode.value) {
         playIndex.value = playIndex.value - 1;
-        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        playSong(
+            readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
       } else {
         var uri = playedSongs.last;
         int index = playedSongsIndex.last;
@@ -78,13 +83,15 @@ class PlayxController extends GetxController {
     if (ID == 1) {
       if (mode.value) {
         playIndex.value = playIndex.value + 1;
-        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        playSong(
+            readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
         wasPaused = false;
       } else {
         //Choosing the Index or Song at random
         final random = Random();
-        playIndex.value = random.nextInt(SongsList.length);
-        playSong(SongsList[playIndex.value].uri, playIndex.value, SongsList);
+        playIndex.value = random.nextInt(readSongsList.length);
+        playSong(
+            readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
         wasPaused = false;
       }
     }
@@ -130,7 +137,7 @@ class PlayxController extends GetxController {
       isPlaying(true);
       wasPaused = false;
       updatePositon();
-      eventListener(index, SongsList);
+      eventListener(index);
     } on Exception catch (e) {
       print(e.toString());
     }
@@ -153,6 +160,14 @@ class PlayxController extends GetxController {
 
     Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
     print("Returned Songs Length : ${Songs.length}");
+  }
+
+  bool checkPage(String page) {
+    if (page == "HomeScreen") {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void search(List<SongModel> Songs, String search) {

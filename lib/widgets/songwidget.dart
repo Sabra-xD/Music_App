@@ -61,10 +61,13 @@ FutureBuilder<List<SongModel>> ListSongs(
                           () => ListTile(
                             onTap: () {
                               // Play Song & Navigate to PlayScreen
+                              if (controller.isPlaying == false &&
+                                  controller.playIndex.value != index) {}
                               controller.playSong(
                                   controller.readSongsList[index].uri,
                                   index,
                                   controller.readSongsList);
+
                               Get.to(playerScreen(
                                 Song: controller.readSongsList[index],
                                 index: index,
@@ -145,4 +148,63 @@ BoxDecoration gradientBackground() {
         Colors.yellow.shade700.withOpacity(0.8),
         Colors.grey.shade900.withOpacity(0.95),
       ]));
+}
+
+Row controlButtons(String page, PlayxController controller) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: [
+      IconButton(
+          onPressed: () {
+            //Jump to previous song
+            //ID is 0 so we play PREVIOUS SONG
+            controller.playPreviousOrNextSong(0);
+          },
+          icon: Icon(
+            Icons.skip_previous,
+            color: Colors.white,
+            size: controller.checkPage(page) ? 15 : 35,
+          )),
+      ClipOval(
+        child: Container(
+          width: controller.checkPage(page) ? 40 : 70,
+          height: controller.checkPage(page) ? 40 : 70,
+          color: Colors.white,
+          child: IconButton(
+              onPressed: () {
+                if (controller.isPlaying.value == false) {
+                  controller.playSong(
+                      controller.readSongsList[controller.playIndex.value].uri,
+                      controller.readSongsList,
+                      controller.readSongsList);
+                } else {
+                  controller.pauseSong();
+                }
+              },
+              icon: controller.isPlaying.value
+                  ? Icon(
+                      Icons.pause,
+                      color: Colors.purple.shade800.withOpacity(0.8),
+                      size: 55,
+                    )
+                  : Icon(
+                      Icons.play_arrow,
+                      color: Colors.purple.shade800.withOpacity(0.8),
+                      size: 55,
+                    )),
+        ),
+      ),
+      IconButton(
+          onPressed: () {
+            //Jump to next song
+            //ID IS 1 to Play Next Song
+            controller.playPreviousOrNextSong(1);
+          },
+          icon: Icon(
+            Icons.skip_next,
+            color: Colors.white,
+            size: controller.checkPage(page) ? 15 : 35,
+          )),
+    ],
+  );
 }
