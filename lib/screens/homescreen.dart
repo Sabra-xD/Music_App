@@ -4,12 +4,13 @@ import 'package:music_app/constants/textstyle.dart';
 import '../controllers/playercontroller.dart';
 import '../widgets/songwidget.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final controller = Get.put(PlayxController());
   final _searchController = TextEditingController();
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   bool onItialize = true;
 
   @override
@@ -85,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                 child: ListSongs(controller, controller.onInitailize.value),
               ),
               Obx(
-                () => controller.isPlaying.value
+                () => controller.isPlaying.value || controller.wasPaused
                     ? Container(
                         padding: const EdgeInsets.only(top: 5),
                         height: 100,

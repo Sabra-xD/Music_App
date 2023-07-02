@@ -60,13 +60,7 @@ FutureBuilder<List<SongModel>> ListSongs(
                         child: Obx(
                           () => ListTile(
                             onTap: () {
-                              // Play Song & Navigate to PlayScreen
-                              if (controller.isPlaying == false &&
-                                  controller.playIndex.value != index) {}
-                              controller.playSong(
-                                  controller.readSongsList[index].uri,
-                                  index,
-                                  controller.readSongsList);
+                              checkPlayingSong(controller, index);
 
                               Get.to(playerScreen(
                                 Song: controller.readSongsList[index],
@@ -74,10 +68,9 @@ FutureBuilder<List<SongModel>> ListSongs(
                                 SongsList: controller.readSongsList,
                               ));
                             },
-                            tileColor: controller.playIndex.value == index &&
-                                    controller.isPlaying.value
+                            tileColor: tileColorController(controller, index)
                                 ? Colors.black45
-                                : Color.fromARGB(255, 149, 122, 3),
+                                : const Color.fromARGB(255, 149, 122, 3),
                             leading: IconButton(
                               onPressed: () {},
                               icon: const Icon(
@@ -97,7 +90,7 @@ FutureBuilder<List<SongModel>> ListSongs(
                                       controller.readSongsList);
                                 }
                               },
-                              icon: controller.playIndex == index &&
+                              icon: controller.playIndex.value == index &&
                                       controller.isPlaying.value
                                   ? const Icon(
                                       Icons.pause,
@@ -139,6 +132,25 @@ FutureBuilder<List<SongModel>> ListSongs(
   );
 }
 
+bool tileColorController(PlayxController controller, int index) {
+  return controller.playIndex.value == index && controller.isPlaying.value ||
+      (controller.wasPaused && controller.playIndex.value == index);
+}
+
+void checkPlayingSong(PlayxController controller, int index) {
+  if (controller.isPlaying.value) {
+    if (controller.playIndex.value == index) {
+      //Do nothing but navigate to the page.
+    } else {
+      controller.playSong(
+          controller.readSongsList[index].uri, index, controller.readSongsList);
+    }
+  } else {
+    controller.playSong(
+        controller.readSongsList[index].uri, index, controller.readSongsList);
+  }
+}
+
 BoxDecoration gradientBackground() {
   return BoxDecoration(
       gradient: LinearGradient(
@@ -172,25 +184,25 @@ Row controlButtons(String page, PlayxController controller) {
           color: Colors.white,
           child: IconButton(
               onPressed: () {
-                if (controller.isPlaying.value == false) {
+                if (controller.isPlaying.value) {
+                  controller.pauseSong();
+                } else {
                   controller.playSong(
                       controller.readSongsList[controller.playIndex.value].uri,
-                      controller.readSongsList,
+                      controller.playIndex.value,
                       controller.readSongsList);
-                } else {
-                  controller.pauseSong();
                 }
               },
               icon: controller.isPlaying.value
                   ? Icon(
                       Icons.pause,
                       color: Colors.purple.shade800.withOpacity(0.8),
-                      size: 55,
+                      size: controller.checkPage(page) ? 25 : 55,
                     )
                   : Icon(
                       Icons.play_arrow,
                       color: Colors.purple.shade800.withOpacity(0.8),
-                      size: 55,
+                      size: controller.checkPage(page) ? 25 : 55,
                     )),
         ),
       ),

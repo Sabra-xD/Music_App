@@ -6,16 +6,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:just_audio/just_audio.dart';
 
 void checkPermission(OnAudioQuery AudioQueryx) async {
-  // var perm = await Permission.storage.request();
-
-  print("Checking permission");
-  // AudioQueryx.permissionsStatus();
-  print(kIsWeb);
   if (!kIsWeb) {
-    print(AudioQueryx.permissionsStatus());
     bool permissionStatus = await AudioQueryx.permissionsRequest();
 
-    print(permissionStatus);
     if (!permissionStatus) {
       await AudioQueryx.permissionsRequest();
     }
@@ -28,9 +21,9 @@ class SongScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // var controller = Get.put(PlayxController()); // Initializing the controller.
-    final _audioQuery = OnAudioQuery();
+    final audioQuery = OnAudioQuery();
 
-    checkPermission(_audioQuery);
+    checkPermission(audioQuery);
 
     return Container(
       decoration: BoxDecoration(
@@ -46,7 +39,7 @@ class SongScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: FutureBuilder<List<SongModel>>(
-          future: _audioQuery.querySongs(
+          future: audioQuery.querySongs(
             ignoreCase: true,
             orderType: OrderType.ASC_OR_SMALLER,
             sortType: null,

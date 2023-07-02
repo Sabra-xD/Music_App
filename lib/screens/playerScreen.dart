@@ -5,10 +5,11 @@ import 'package:music_app/controllers/playercontroller.dart';
 import 'package:music_app/widgets/songwidget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-// ignore: camel_case_types
 class playerScreen extends StatelessWidget {
+  // ignore: non_constant_identifier_names
   final SongModel Song;
   final int index;
+  // ignore: non_constant_identifier_names
   final List<SongModel> SongsList;
   playerScreen(
       {super.key,

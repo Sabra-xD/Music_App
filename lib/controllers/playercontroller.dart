@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -5,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PlayxController extends GetxController {
   final onInitailize = true.obs;
@@ -24,6 +25,7 @@ class PlayxController extends GetxController {
   var maxDuration = 0.0.obs;
   var value = 0.0.obs;
   bool wasPaused = false;
+
   int count = 0;
   var mode = true.obs; //Mode true then normal false then shuffle
   final readSongsList = <SongModel>[].obs;
@@ -42,7 +44,6 @@ class PlayxController extends GetxController {
     mode.value = !mode.value;
   }
 
-  // ignore: non_constant_identifier_names
   void eventListener(index) {
     _AudioPlayer.playerStateStream.listen((event) {
       if (event.processingState == ProcessingState.completed) {
@@ -70,7 +71,6 @@ class PlayxController extends GetxController {
         playSong(
             readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
       } else {
-        var uri = playedSongs.last;
         int index = playedSongsIndex.last;
 
         playIndex.value = index;
@@ -122,18 +122,17 @@ class PlayxController extends GetxController {
     }
   }
 
-  // ignore: non_constant_identifier_names
-  void playSong(String? uri, index, List<SongModel> SongsList) {
+  void playSong(String? uri, int index, List<SongModel> SongsList) {
     try {
-      if (!wasPaused) {
+      if (!wasPaused || playIndex.value != index) {
         _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
         playedSongs.add(uri);
+        isPlaying(true);
         playedSongsIndex.add(index);
       }
 
       _AudioPlayer.play();
       playIndex.value = index;
-      print("Value of PlayIndex: ${playIndex}");
       isPlaying(true);
       wasPaused = false;
       updatePositon();
