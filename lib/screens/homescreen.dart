@@ -11,7 +11,6 @@ class HomeScreen extends StatelessWidget {
   final controller = Get.put(PlayxController());
   final _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  bool onItialize = true;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
               Expanded(
-                child: ListSongs(controller, controller.onInitailize.value),
+                child: ListSongs(controller),
               ),
               Obx(
                 () => controller.isPlaying.value || controller.wasPaused

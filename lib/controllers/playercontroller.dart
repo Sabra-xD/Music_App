@@ -35,9 +35,20 @@ class PlayxController extends GetxController {
   final playedSongs = <dynamic>[];
   final playedSongsIndex = <dynamic>[];
   @override
-  void onInit() {
+  void onInit() async {
     checkPermission();
+
     super.onInit();
+  }
+
+  void readSongs() async {
+    savedSongsList.value = await AudioQueryx.querySongs(
+      ignoreCase: true,
+      orderType: OrderType.ASC_OR_SMALLER,
+      sortType: SongSortType.DATE_ADDED,
+      uriType: UriType.values.first,
+    );
+    // readSongsList.value = savedSongsList;
   }
 
   void changeMode() {
@@ -116,9 +127,11 @@ class PlayxController extends GetxController {
   void checkPermission() async {
     if (!kIsWeb) {
       bool permissionStatus = await AudioQueryx.permissionsRequest();
+
       if (!permissionStatus) {
         await AudioQueryx.permissionsRequest();
       }
+      readSongs();
     }
   }
 
@@ -170,25 +183,24 @@ class PlayxController extends GetxController {
   }
 
   void search(List<SongModel> Songs, String search) {
-    savedSongsList
-        .removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
     Songs = savedSongsList;
     if (search != '') {
       //Here we should find the songs that start with certain words.
-
       print("SEARCHING .....");
       Songs = Songs.where((str) => str.title.toLowerCase().contains(search))
           .toList();
 
       print("Searched songs list: ${Songs.length}");
+      Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
+      readSongsList.value = Songs;
     } else {
       print("NOT SEARCHING!.....");
       savedSongsList
           .removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
       Songs = savedSongsList;
       print("Saved Songs list: ${Songs.length}");
+      Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
+      readSongsList.value = savedSongsList;
     }
-    Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-    readSongsList.value = Songs;
   }
 }

@@ -7,8 +7,7 @@ import '../constants/textstyle.dart';
 import '../controllers/playercontroller.dart';
 
 // ignore: non_constant_identifier_names
-FutureBuilder<List<SongModel>> ListSongs(
-    PlayxController controller, onInitailize) {
+FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
   return FutureBuilder<List<SongModel>>(
     future: controller.AudioQueryx.querySongs(
       ignoreCase: true,
@@ -36,12 +35,12 @@ FutureBuilder<List<SongModel>> ListSongs(
                 child: Text("No Songs found"),
               );
             } else {
-              if (onInitailize) {
+              if (controller.onInitailize.value) {
+                controller.onInitailize.value = false;
                 List<SongModel> Songs = snapshot.data!;
                 controller.readSongsList.value = Songs;
                 controller.savedSongsList.value = Songs;
                 controller.removeRecordingandOrder(controller.readSongsList);
-                onInitailize = false;
               }
 
               return Obx(
@@ -90,8 +89,7 @@ FutureBuilder<List<SongModel>> ListSongs(
                                       controller.readSongsList);
                                 }
                               },
-                              icon: controller.playIndex.value == index &&
-                                      controller.isPlaying.value
+                              icon: iconDisplayController(controller, index)
                                   ? const Icon(
                                       Icons.pause,
                                       color: Colors.white,
@@ -130,6 +128,10 @@ FutureBuilder<List<SongModel>> ListSongs(
       return const Text("Nothing");
     },
   );
+}
+
+bool iconDisplayController(PlayxController controller, int index) {
+  return controller.playIndex.value == index && controller.isPlaying.value;
 }
 
 bool tileColorController(PlayxController controller, int index) {
