@@ -41,6 +41,17 @@ class PlayxController extends GetxController {
     super.onInit();
   }
 
+  void checkPermission() async {
+    if (!kIsWeb) {
+      bool permissionStatus = await AudioQueryx.permissionsRequest();
+
+      if (!permissionStatus) {
+        await AudioQueryx.permissionsRequest();
+      }
+      readSongs();
+    }
+  }
+
   void readSongs() async {
     savedSongsList.value = await AudioQueryx.querySongs(
       ignoreCase: true,
@@ -65,46 +76,68 @@ class PlayxController extends GetxController {
           playSong(readSongsList[playIndex.value].uri, playIndex.value,
               readSongsList);
         } else {
-          final random = Random();
-          playIndex.value = random.nextInt(readSongsList.length);
-          playSong(readSongsList[playIndex.value].uri, playIndex.value,
-              readSongsList);
+          playRandomSong();
         }
       }
     });
+  }
+
+  void playRandomSong() {
+    final random = Random();
+    playIndex.value = random.nextInt(readSongsList.length);
+    playPreviousSong(readSongsList[playIndex.value].uri, playIndex.value);
   }
 
 //IF ID is 0 Then play previous song if ID is 1 then play next Song
   void playPreviousOrNextSong(int ID) {
     if (ID == 0) {
       if (mode.value) {
-        playIndex.value = playIndex.value - 1;
+        if (playIndex.value > 0) {
+          //Play previous song or start from the bottom.
+          playIndex.value = playIndex.value - 1;
+        } else {
+          playIndex.value = readSongsList.length - 1;
+        }
         playSong(
             readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
       } else {
-        int index = playedSongsIndex.last;
-
-        playIndex.value = index;
-
-        playedSongs.removeLast();
-        playedSongsIndex.removeLast();
+        //The shuffle mode pop.
+        playPreviousSongInShuffle();
       }
-      wasPaused = false;
     }
     if (ID == 1) {
       if (mode.value) {
-        playIndex.value = playIndex.value + 1;
+        if (playIndex.value != savedSongsList.length) {
+          playIndex.value = playIndex.value + 1;
+        } else {
+          playIndex.value = 0;
+        }
+
         playSong(
             readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
-        wasPaused = false;
       } else {
         //Choosing the Index or Song at random
         final random = Random();
         playIndex.value = random.nextInt(readSongsList.length);
         playSong(
             readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
-        wasPaused = false;
       }
+    }
+    wasPaused = false;
+  }
+
+  void playPreviousSongInShuffle() {
+    //The shuffle mode pop.
+    if (playedSongs.isNotEmpty && playedSongsIndex.isNotEmpty) {
+      playedSongs.removeLast();
+      playedSongsIndex.removeLast();
+
+      playIndex.value = playedSongsIndex.last;
+
+      //We are picking from the playedSongs List. And updated the screen using the Song's GLOBAL index. Since we're using a local index within its list.
+      playPreviousSong(playedSongs[playedSongs.length - 1], playIndex.value);
+    } else {
+      playRandomSong();
     }
   }
 
@@ -113,6 +146,7 @@ class PlayxController extends GetxController {
     _AudioPlayer.seek(newPositon);
   }
 
+//This function runs when we jump in songs.
   void updatePositon() {
     _AudioPlayer.durationStream.listen((d) {
       duration.value = d.toString().split(".")[0];
@@ -122,17 +156,6 @@ class PlayxController extends GetxController {
       position.value = p.toString().split(".")[0];
       value.value = p.inSeconds.toDouble();
     });
-  }
-
-  void checkPermission() async {
-    if (!kIsWeb) {
-      bool permissionStatus = await AudioQueryx.permissionsRequest();
-
-      if (!permissionStatus) {
-        await AudioQueryx.permissionsRequest();
-      }
-      readSongs();
-    }
   }
 
   void playSong(String? uri, int index, List<SongModel> SongsList) {
@@ -155,16 +178,30 @@ class PlayxController extends GetxController {
     }
   }
 
+  void playPreviousSong(String? uri, int index) {
+    try {
+      if (!wasPaused || playIndex.value != index) {
+        _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+        isPlaying(true);
+      }
+
+      _AudioPlayer.play();
+      playIndex.value = index;
+      isPlaying(true);
+      wasPaused = false;
+      updatePositon();
+      eventListener(index);
+    } on Exception catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> pauseSong() async {
     if (isPlaying.value) {
       await _AudioPlayer.pause();
       isPlaying.value = false;
       wasPaused = true;
     }
-  }
-
-  int getSongsListCount(List<SongModel> Songs) {
-    return Songs.length;
   }
 
   void removeRecordingandOrder(List<SongModel> Songs) {
