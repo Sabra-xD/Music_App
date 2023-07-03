@@ -35,14 +35,6 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
                 child: Text("No Songs found"),
               );
             } else {
-              if (controller.onInitailize.value) {
-                controller.onInitailize.value = false;
-                List<SongModel> Songs = snapshot.data!;
-                controller.readSongsList.value = Songs;
-                controller.savedSongsList.value = Songs;
-                controller.removeRecordingandOrder(controller.readSongsList);
-              }
-
               return Obx(
                 () => ListView.builder(
                   itemCount: controller

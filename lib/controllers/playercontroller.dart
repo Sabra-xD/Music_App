@@ -47,19 +47,22 @@ class PlayxController extends GetxController {
 
       if (!permissionStatus) {
         await AudioQueryx.permissionsRequest();
+      } else {
+        readSongs();
       }
-      readSongs();
     }
   }
 
+//Read sogns after having access to.
   void readSongs() async {
-    savedSongsList.value = await AudioQueryx.querySongs(
+    readSongsList.value = await AudioQueryx.querySongs(
       ignoreCase: true,
       orderType: OrderType.ASC_OR_SMALLER,
       sortType: SongSortType.DATE_ADDED,
       uriType: UriType.values.first,
     );
-    // readSongsList.value = savedSongsList;
+
+    removeRecordingandOrder(readSongsList);
   }
 
   void changeMode() {
@@ -105,9 +108,10 @@ class PlayxController extends GetxController {
         playPreviousSongInShuffle();
       }
     }
+    //Playing Next Song
     if (ID == 1) {
       if (mode.value) {
-        if (playIndex.value != savedSongsList.length) {
+        if (playIndex.value != savedSongsList.length - 1) {
           playIndex.value = playIndex.value + 1;
         } else {
           playIndex.value = 0;
@@ -208,7 +212,9 @@ class PlayxController extends GetxController {
     Songs.removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
 
     Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-    print("Returned Songs Length : ${Songs.length}");
+    // print("Returned Songs Length : ${Songs.length}");
+    savedSongsList.value = List.from(readSongsList);
+    print(savedSongsList.length);
   }
 
   bool checkPage(String page) {
@@ -219,25 +225,20 @@ class PlayxController extends GetxController {
     }
   }
 
-  void search(List<SongModel> Songs, String search) {
-    Songs = savedSongsList;
-    if (search != '') {
-      //Here we should find the songs that start with certain words.
-      print("SEARCHING .....");
-      Songs = Songs.where((str) => str.title.toLowerCase().contains(search))
+  void search(List<SongModel> songs, String search) {
+    List<SongModel> filteredSongs = List.from(savedSongsList);
+    if (search.isNotEmpty) {
+      // Filter songs based on search criteria
+      filteredSongs = filteredSongs
+          .where(
+              (song) => song.title.toLowerCase().contains(search.toLowerCase()))
           .toList();
 
-      print("Searched songs list: ${Songs.length}");
-      Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-      readSongsList.value = Songs;
+      filteredSongs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
+
+      readSongsList.value = filteredSongs;
     } else {
-      print("NOT SEARCHING!.....");
-      savedSongsList
-          .removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
-      Songs = savedSongsList;
-      print("Saved Songs list: ${Songs.length}");
-      Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-      readSongsList.value = savedSongsList;
+      readSongsList.value = List.from(savedSongsList);
     }
   }
 }

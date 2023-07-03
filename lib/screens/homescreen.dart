@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:music_app/constants/textstyle.dart';
+import 'package:music_app/screens/playerScreen.dart';
 import '../controllers/playercontroller.dart';
 import '../widgets/songwidget.dart';
 
@@ -86,41 +87,51 @@ class HomeScreen extends StatelessWidget {
               ),
               Obx(
                 () => controller.isPlaying.value || controller.wasPaused
-                    ? Container(
-                        padding: const EdgeInsets.only(top: 5),
-                        height: 100,
-                        width: double.infinity,
-                        color: Colors.black,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Now Playing:   ${controller.readSongsList[controller.playIndex.value].title} ",
-                              style: OurStyle(fontSize: 12),
-                            ),
-                            Expanded(
-                                child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                  trackHeight: 4,
-                                  thumbShape: const RoundSliderThumbShape(
-                                    disabledThumbRadius: 4,
-                                    enabledThumbRadius: 4,
-                                  ),
-                                  overlayShape: const RoundSliderOverlayShape(
-                                    overlayRadius: 0,
-                                  ),
-                                  activeTrackColor:
-                                      Colors.white.withOpacity(0.2),
-                                  inactiveTrackColor: Colors.white,
-                                  thumbColor: Colors.white,
-                                  overlayColor: Colors.white),
-                              child: Slider(
-                                  min: 0.0,
-                                  max: controller.maxDuration.value,
-                                  value: controller.value.value,
-                                  onChanged: (value) {}),
-                            )),
-                            controlButtons("HomeScreen", controller),
-                          ],
+                    ? GestureDetector(
+                        onTap: () {
+                          Get.to(playerScreen(
+                            Song: controller
+                                .readSongsList[controller.playIndex.value],
+                            index: controller.playIndex.value,
+                            SongsList: controller.readSongsList,
+                          ));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 5),
+                          height: 100,
+                          width: double.infinity,
+                          color: Colors.black,
+                          child: Column(
+                            children: [
+                              Text(
+                                "Now Playing:   ${controller.readSongsList[controller.playIndex.value].title} ",
+                                style: OurStyle(fontSize: 12),
+                              ),
+                              Expanded(
+                                  child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                    trackHeight: 4,
+                                    thumbShape: const RoundSliderThumbShape(
+                                      disabledThumbRadius: 4,
+                                      enabledThumbRadius: 4,
+                                    ),
+                                    overlayShape: const RoundSliderOverlayShape(
+                                      overlayRadius: 0,
+                                    ),
+                                    activeTrackColor:
+                                        Colors.white.withOpacity(0.2),
+                                    inactiveTrackColor: Colors.white,
+                                    thumbColor: Colors.white,
+                                    overlayColor: Colors.white),
+                                child: Slider(
+                                    min: 0.0,
+                                    max: controller.maxDuration.value,
+                                    value: controller.value.value,
+                                    onChanged: (value) {}),
+                              )),
+                              controlButtons("HomeScreen", controller),
+                            ],
+                          ),
                         ),
                       )
                     : const SizedBox(

@@ -52,6 +52,25 @@ class playerScreen extends StatelessWidget {
                 decoration: gradientBackground(),
               ),
             ),
+            // Listener(
+
+            //   child: GestureDetector(
+            //     onHorizontalDragUpdate: (DragUpdateDetails details) {
+            //       if (details.delta.dx > 0) {
+            //         //Dragging to the right.
+            //         controller.playPreviousOrNextSong(0);
+            //       } else if (details.delta.dx < 0) {
+            //         //Dragging to the left.
+            //         controller.playPreviousOrNextSong(1);
+            //       }
+            //     },
+            //     child: Expanded(
+            //       child: Container(
+            //         color: Colors.transparent,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Obx(
               () => Container(
                 padding: const EdgeInsets.all(10),
