@@ -21,7 +21,9 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
           child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               width: MediaQuery.of(context).size.height * 0.5,
-              child: const CircularProgressIndicator()),
+              child: CircularProgressIndicator(
+                color: progressIndicatorColor,
+              )),
         );
       } else {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -63,7 +65,7 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
                             },
                             tileColor: tileColorController(controller, index)
                                 ? Colors.black45
-                                : const Color.fromARGB(255, 149, 122, 3),
+                                : Colors.purple.shade800.withOpacity(0.8),
                             leading: IconButton(
                               onPressed: () {},
                               icon: const Icon(
@@ -78,9 +80,9 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
                                   controller.isPlaying.value = false;
                                 } else {
                                   controller.playSong(
-                                      controller.readSongsList[index].uri,
-                                      index,
-                                      controller.readSongsList);
+                                    controller.readSongsList[index].uri,
+                                    index,
+                                  );
                                 }
                               },
                               icon: iconDisplayController(controller, index)
@@ -160,24 +162,23 @@ void checkPlayingSong(PlayxController controller, int index) {
             controller
                 .readSongsList[controller.filteredSongsOriginalIndex[index]]
                 .uri,
-            controller.filteredSongsOriginalIndex[index],
-            controller.readSongsList);
+            controller.filteredSongsOriginalIndex[index]);
       }
     } else {
-      controller.playSong(
-          controller.readSongsList[index].uri, index, controller.readSongsList);
+      controller.playSong(controller.readSongsList[index].uri, index);
     }
   } else {
     if (controller.isPlaying.value) {
       if (controller.playIndex.value == index) {
         //Do nothing but navigate to the page.
       } else {
-        controller.playSong(controller.readSongsList[index].uri, index,
-            controller.readSongsList);
+        controller.playSong(
+          controller.readSongsList[index].uri,
+          index,
+        );
       }
     } else {
-      controller.playSong(
-          controller.readSongsList[index].uri, index, controller.readSongsList);
+      controller.playSong(controller.readSongsList[index].uri, index);
     }
   }
 }
@@ -188,7 +189,7 @@ BoxDecoration gradientBackground() {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-        Colors.yellow.shade700.withOpacity(0.8),
+        Colors.purple.shade700.withOpacity(0.8),
         Colors.grey.shade900.withOpacity(0.95),
       ]));
 }
@@ -220,8 +221,7 @@ Row controlButtons(String page, PlayxController controller) {
                 } else {
                   controller.playSong(
                       controller.readSongsList[controller.playIndex.value].uri,
-                      controller.playIndex.value,
-                      controller.readSongsList);
+                      controller.playIndex.value);
                 }
               },
               icon: controller.isPlaying.value

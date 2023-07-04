@@ -79,8 +79,7 @@ class PlayxController extends GetxController {
         if (mode.value) {
           int newSong = index + 1;
           playIndex.value = newSong;
-          playSong(readSongsList[playIndex.value].uri, playIndex.value,
-              readSongsList);
+          playSong(readSongsList[playIndex.value].uri, playIndex.value);
         } else {
           playRandomSong();
         }
@@ -104,8 +103,7 @@ class PlayxController extends GetxController {
         } else {
           playIndex.value = readSongsList.length - 1;
         }
-        playSong(
-            readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
+        playSong(readSongsList[playIndex.value].uri, playIndex.value);
       } else {
         //The shuffle mode pop.
         playPreviousSongInShuffle();
@@ -120,15 +118,13 @@ class PlayxController extends GetxController {
           playIndex.value = 0;
         }
 
-        playSong(
-            readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
+        playSong(readSongsList[playIndex.value].uri, playIndex.value);
       } else {
         //Choosing the Index or Song at random
         final random = Random();
         playIndex.value = random.nextInt(savedSongsList
             .length); //This might cause an error of the index overflow.
-        playSong(
-            readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
+        playSong(readSongsList[playIndex.value].uri, playIndex.value);
       }
     }
     wasPaused = false;
@@ -166,7 +162,7 @@ class PlayxController extends GetxController {
     });
   }
 
-  void playSong(String? uri, int index, List<SongModel> SongsList) {
+  void playSong(String? uri, int index) {
     try {
       if (!wasPaused || playIndex.value != index) {
         _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
@@ -245,8 +241,6 @@ class PlayxController extends GetxController {
       }
 
       filteredSongs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-
-      // readSongsList.value = filteredSongs;
     } else {
       searching.value = false;
       readSongsList.value = List.from(savedSongsList);

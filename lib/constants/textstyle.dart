@@ -25,3 +25,5 @@ uniformPadding() {
 songListPadding() {
   return const EdgeInsets.all(5);
 }
+
+Color progressIndicatorColor = Colors.purple.shade300;
