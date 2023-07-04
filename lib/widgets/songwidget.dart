@@ -37,8 +37,10 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
             } else {
               return Obx(
                 () => ListView.builder(
-                  itemCount: controller
-                      .readSongsList.length, //Wee need this to change.
+                  itemCount: controller.searching.value
+                      ? controller.filteredSongs.length
+                      : controller
+                          .readSongsList.length, //Wee need this to change.
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       padding: songListPadding(),
@@ -91,21 +93,37 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
                                       color: Colors.white,
                                     ),
                             ),
-                            title: Text(
-                              controller.readSongsList[index].displayNameWOExt,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: SongStyle(),
-                            ),
-                            subtitle: (controller.readSongsList[index].artist ==
-                                    "<unknown>")
-                                ? null
+                            title: controller.searching.value
+                                ? Text(
+                                    controller
+                                        .filteredSongs[index].displayNameWOExt,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: SongStyle(),
+                                  )
                                 : Text(
-                                    "${controller.readSongsList[index].artist}",
-                                    maxLines: 1,
+                                    controller
+                                        .readSongsList[index].displayNameWOExt,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: SongStyle(),
                                   ),
+                            subtitle: (controller.readSongsList[index].artist ==
+                                    "<unknown>")
+                                ? null
+                                : controller.searching.value
+                                    ? Text(
+                                        "${controller.filteredSongs[index].artist}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: SongStyle(),
+                                      )
+                                    : Text(
+                                        "${controller.readSongsList[index].artist}",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: SongStyle(),
+                                      ),
                           ),
                         ),
                       ),
@@ -132,16 +150,35 @@ bool tileColorController(PlayxController controller, int index) {
 }
 
 void checkPlayingSong(PlayxController controller, int index) {
-  if (controller.isPlaying.value) {
-    if (controller.playIndex.value == index) {
-      //Do nothing but navigate to the page.
+  if (controller.searching.value) {
+    if (controller.isPlaying.value) {
+      if (controller.playIndex.value ==
+          controller.filteredSongsOriginalIndex[index]) {
+        //Do nothing G
+      } else {
+        controller.playSong(
+            controller
+                .readSongsList[controller.filteredSongsOriginalIndex[index]]
+                .uri,
+            controller.filteredSongsOriginalIndex[index],
+            controller.readSongsList);
+      }
     } else {
       controller.playSong(
           controller.readSongsList[index].uri, index, controller.readSongsList);
     }
   } else {
-    controller.playSong(
-        controller.readSongsList[index].uri, index, controller.readSongsList);
+    if (controller.isPlaying.value) {
+      if (controller.playIndex.value == index) {
+        //Do nothing but navigate to the page.
+      } else {
+        controller.playSong(controller.readSongsList[index].uri, index,
+            controller.readSongsList);
+      }
+    } else {
+      controller.playSong(
+          controller.readSongsList[index].uri, index, controller.readSongsList);
+    }
   }
 }
 

@@ -25,10 +25,13 @@ class PlayxController extends GetxController {
   var maxDuration = 0.0.obs;
   var value = 0.0.obs;
   bool wasPaused = false;
+  var searching = false.obs;
 
   int count = 0;
   var mode = true.obs; //Mode true then normal false then shuffle
   final readSongsList = <SongModel>[].obs;
+  final filteredSongs = <SongModel>[].obs;
+  final filteredSongsOriginalIndex = <dynamic>[].obs;
 
   final savedSongsList = <SongModel>[].obs;
   // RxList<SongModel> readSongsList = <SongModel>[].obs;
@@ -122,7 +125,8 @@ class PlayxController extends GetxController {
       } else {
         //Choosing the Index or Song at random
         final random = Random();
-        playIndex.value = random.nextInt(readSongsList.length);
+        playIndex.value = random.nextInt(savedSongsList
+            .length); //This might cause an error of the index overflow.
         playSong(
             readSongsList[playIndex.value].uri, playIndex.value, readSongsList);
       }
@@ -212,9 +216,8 @@ class PlayxController extends GetxController {
     Songs.removeWhere((Song) => Song.displayNameWOExt.startsWith("AUD"));
 
     Songs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
-    // print("Returned Songs Length : ${Songs.length}");
+
     savedSongsList.value = List.from(readSongsList);
-    print(savedSongsList.length);
   }
 
   bool checkPage(String page) {
@@ -226,18 +229,26 @@ class PlayxController extends GetxController {
   }
 
   void search(List<SongModel> songs, String search) {
-    List<SongModel> filteredSongs = List.from(savedSongsList);
+    filteredSongs.value = List.from(savedSongsList);
     if (search.isNotEmpty) {
-      // Filter songs based on search criteria
-      filteredSongs = filteredSongs
-          .where(
-              (song) => song.title.toLowerCase().contains(search.toLowerCase()))
-          .toList();
+      searching.value = true;
+
+//Clearing the list before searching to avoid accumilation.
+      filteredSongsOriginalIndex.value = [];
+      filteredSongs.value = [];
+      for (int i = 0; i < savedSongsList.length; i++) {
+        SongModel song = savedSongsList[i];
+        if (song.title.toLowerCase().contains(search.toLowerCase())) {
+          filteredSongsOriginalIndex.add(i);
+          filteredSongs.add(savedSongsList[i]);
+        }
+      }
 
       filteredSongs.sort((a, b) => b.dateAdded!.compareTo(a.dateAdded!));
 
-      readSongsList.value = filteredSongs;
+      // readSongsList.value = filteredSongs;
     } else {
+      searching.value = false;
       readSongsList.value = List.from(savedSongsList);
     }
   }
