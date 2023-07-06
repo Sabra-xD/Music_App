@@ -89,46 +89,57 @@ class HomeScreen extends StatelessWidget {
                 () => controller.isPlaying.value || controller.wasPaused
                     ? GestureDetector(
                         onTap: () {
-                          Get.to(playerScreen(
-                            Song: controller
-                                .readSongsList[controller.playIndex.value],
-                            index: controller.playIndex.value,
-                            SongsList: controller.readSongsList,
-                          ));
+                          Navigator.push(
+                              context,
+                              SlideUpPageRoute(
+                                page: playerScreen(
+                                  Song: controller.readSongsList[
+                                      controller.playIndex.value],
+                                  index: controller.playIndex.value,
+                                  SongsList: controller.readSongsList,
+                                ),
+                              ));
                         },
                         child: Container(
                           padding: const EdgeInsets.only(top: 5),
-                          height: 100,
+                          height: MediaQuery.of(context).size.height * 0.18,
                           width: double.infinity,
                           color: Colors.black,
                           child: Column(
                             children: [
-                              Text(
-                                "Now Playing:   ${controller.readSongsList[controller.playIndex.value].title} ",
-                                style: OurStyle(fontSize: 12),
+                              Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Text(
+                                  "Now Playing:   ${controller.readSongsList[controller.playIndex.value].title} ",
+                                  style: OurStyle(fontSize: 12),
+                                ),
                               ),
-                              Expanded(
-                                  child: SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                    trackHeight: 4,
-                                    thumbShape: const RoundSliderThumbShape(
-                                      disabledThumbRadius: 4,
-                                      enabledThumbRadius: 4,
-                                    ),
-                                    overlayShape: const RoundSliderOverlayShape(
-                                      overlayRadius: 0,
-                                    ),
-                                    activeTrackColor:
-                                        Colors.white.withOpacity(0.2),
-                                    inactiveTrackColor: Colors.white,
-                                    thumbColor: Colors.white,
-                                    overlayColor: Colors.white),
-                                child: Slider(
-                                    min: 0.0,
-                                    max: controller.maxDuration.value,
-                                    value: controller.value.value,
-                                    onChanged: (value) {}),
-                              )),
+                              Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Expanded(
+                                    child: SliderTheme(
+                                  data: SliderTheme.of(context).copyWith(
+                                      trackHeight: 4,
+                                      thumbShape: const RoundSliderThumbShape(
+                                        disabledThumbRadius: 4,
+                                        enabledThumbRadius: 4,
+                                      ),
+                                      overlayShape:
+                                          const RoundSliderOverlayShape(
+                                        overlayRadius: 0,
+                                      ),
+                                      activeTrackColor:
+                                          Colors.white.withOpacity(0.2),
+                                      inactiveTrackColor: Colors.white,
+                                      thumbColor: Colors.white,
+                                      overlayColor: Colors.white),
+                                  child: Slider(
+                                      min: 0.0,
+                                      max: controller.maxDuration.value,
+                                      value: controller.value.value,
+                                      onChanged: (value) {}),
+                                )),
+                              ),
                               controlButtons("HomeScreen", controller),
                             ],
                           ),
@@ -153,4 +164,39 @@ AppBar _customAppBar() {
       icon: const Icon(Icons.grid_view_rounded),
     ),
   );
+}
+
+class SlideUpPageRoute<T> extends PageRouteBuilder<T> {
+  final Widget page;
+
+  SlideUpPageRoute({required this.page})
+      : super(
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) =>
+              page,
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) =>
+              SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.0, 2.0),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve:
+                    Curves.easeIn, // Use a slower curve for a slower animation
+              ),
+            ),
+            child: child,
+          ),
+          transitionDuration: const Duration(
+              milliseconds: 400), // Increase the duration of the animation
+        );
 }

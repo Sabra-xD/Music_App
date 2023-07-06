@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:music_app/screens/playerScreen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+import '../constants/colors.dart';
 import '../constants/textstyle.dart';
 import '../controllers/playercontroller.dart';
 
@@ -46,7 +47,7 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       padding: songListPadding(),
-                      margin: const EdgeInsets.all(5),
+                      // margin: const EdgeInsets.all(5),
                       width: MediaQuery.of(context).size.width * 0.6,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
@@ -65,7 +66,7 @@ FutureBuilder<List<SongModel>> ListSongs(PlayxController controller) {
                             },
                             tileColor: tileColorController(controller, index)
                                 ? Colors.black45
-                                : Colors.purple.shade800.withOpacity(0.8),
+                                : controller.setColorDependingOnDay(),
                             leading: IconButton(
                               onPressed: () {},
                               icon: const Icon(
@@ -189,8 +190,8 @@ BoxDecoration gradientBackground() {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-        Colors.purple.shade700.withOpacity(0.8),
-        Colors.grey.shade900.withOpacity(0.95),
+        gradientColor1,
+        gradientColor2,
       ]));
 }
 
@@ -227,12 +228,12 @@ Row controlButtons(String page, PlayxController controller) {
               icon: controller.isPlaying.value
                   ? Icon(
                       Icons.pause,
-                      color: Colors.purple.shade800.withOpacity(0.8),
+                      color: controller.setColorDependingOnDay(),
                       size: controller.checkPage(page) ? 25 : 55,
                     )
                   : Icon(
                       Icons.play_arrow,
-                      color: Colors.purple.shade800.withOpacity(0.8),
+                      color: controller.setColorDependingOnDay(),
                       size: controller.checkPage(page) ? 25 : 55,
                     )),
         ),

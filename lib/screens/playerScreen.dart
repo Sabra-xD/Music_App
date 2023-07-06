@@ -4,6 +4,7 @@ import 'package:music_app/constants/textstyle.dart';
 import 'package:music_app/controllers/playercontroller.dart';
 import 'package:music_app/widgets/songwidget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class playerScreen extends StatelessWidget {
   // ignore: non_constant_identifier_names
@@ -27,9 +28,12 @@ class playerScreen extends StatelessWidget {
       child: Scaffold(
         body: Stack(
           children: [
-            Image.network(
-              "https://th.bing.com/th/id/OIP.kFl7NS4EWbzpiF0p2upUEAHaNK?pid=ImgDet&rs=1",
+            CachedNetworkImage(
+              imageUrl:
+                  "https://e1.pxfuel.com/desktop-wallpaper/811/101/desktop-wallpaper-black-aesthetic-phone-on-dog-calm-dark-phone-thumbnail.jpg",
               fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
             ),
             ShaderMask(
               shaderCallback: (rect) {
@@ -140,7 +144,7 @@ class playerScreen extends StatelessWidget {
                       ),
                       controlButtons("PlayerScreen", controller),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.1,
+                        height: MediaQuery.of(context).size.height * 0.05,
                       )
                     ]),
               ),

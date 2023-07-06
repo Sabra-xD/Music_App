@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:intl/intl.dart';
 
 class PlayxController extends GetxController {
   final onInitailize = true.obs;
@@ -167,7 +168,6 @@ class PlayxController extends GetxController {
       if (!wasPaused || playIndex.value != index) {
         _AudioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
         playedSongs.add(uri);
-        isPlaying(true);
         playedSongsIndex.add(index);
       }
 
@@ -244,6 +244,36 @@ class PlayxController extends GetxController {
     } else {
       searching.value = false;
       readSongsList.value = List.from(savedSongsList);
+    }
+  }
+
+  String getDate() {
+    DateTime now = DateTime.now();
+    String day = DateFormat('EEEE').format(now);
+    return day;
+  }
+
+  Color setColorDependingOnDay() {
+    String day = getDate();
+    if (day.toLowerCase() == "saturday") {
+      return Colors.redAccent;
+    }
+    if (day.toLowerCase() == "thursday") {
+      return Colors.black;
+    }
+    if (day.toLowerCase() == "sunday") {
+      return Colors.purple.shade400;
+    }
+    if (day.toLowerCase() == "monday") {
+      return Colors.yellow.shade400;
+    }
+    if (day.toLowerCase() == "tuesday") {
+      return Colors.blue.shade300;
+    }
+    if (day.toLowerCase() == "friday") {
+      return Colors.orangeAccent.shade700;
+    } else {
+      return Colors.black;
     }
   }
 }
