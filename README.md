@@ -20,7 +20,7 @@ In App ScreenShots:
 ![Displaying .mp3s fetched from Local Storage](https://drive.google.com/file/d/1IxnSOhH1zsKWx_shzw-qJHzvfOUh-c6P/view?usp=sharing)
 ![In App Play](https://drive.google.com/file/d/1IvtjtW6pVx-_KQn4Lvj-g7tfwutJ3eXA/view?usp=sharing)
 ![Search Results](https://drive.google.com/file/d/1ItAHkgbKS8Fzk33XQM5MA4DER7W5gDpY/view?usp=sharing)
-![Shuffle Alert](https://drive.google.com/file/d/1IuAfnDlT2Aus08EpKZYW6BgG59dwsgup/view?usp=sharing)
+![Shuffle Alert](https://ibb.co/SBnK14w)
 
 
 
