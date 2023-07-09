@@ -11,8 +11,13 @@ and the Automatic Playing of next songs depending on the mode chosen.
 
 Also, it changeds style and background color depending on the day of the week and has a custom Up Slide when navigating to a new page built using a custom widget.
 
+APK Download: 
 
-Video:
+
+Video (The Audio is a bit messed up due to the recording):
+
+https://drive.google.com/file/d/1J1DXK_uM4CCNQsRMdrKUa5M4gSWVpNxU/view?usp=sharing
+
 
 
 
