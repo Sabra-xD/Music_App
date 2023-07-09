@@ -1,4 +1,6 @@
+
 ## Music_App
+
 
 
 This is a Music Application created using AudioQuery package to fetch songs from local internal storage using SongsQuery and GetX for optmizied state Management and Permission Handler in order to gain permission to access to the internal storage. 
@@ -11,19 +13,16 @@ and the Automatic Playing of next songs depending on the mode chosen.
 
 Also, it changeds style and background color depending on the day of the week and has a custom Up Slide when navigating to a new page built using a custom widget.
 
-APK Download: 
+APK Download: https://drive.google.com/file/d/1J3lXbwL6UVW2ONY0AYX_y98OCAi26IhT/view?usp=sharing
 
 
-Video (The Audio is a bit messed up due to the recording):
+Video (The Audio is a bit messed up due to the recording): 
 
-https://drive.google.com/file/d/1J1DXK_uM4CCNQsRMdrKUa5M4gSWVpNxU/view?usp=sharing
-
-
+https://github.com/Sabra-xD/Music_App/assets/52329758/0012182e-2204-401d-9dfa-c9f3f089ab1f
 
 
-<video controls>
-  <source src="https://www.veed.io/view/13a998be-2e4c-47de-8b4d-0929361a1c72" type="video/mp4">
-</video>
+
+
 
 
 In App ScreenShots:
