@@ -1,16 +1,28 @@
 # music_app
 
-A new Flutter project.
 
-## Getting Started
+This is a Music Application created using AudoQuery package and GetX for optmizied state Management and Permission Handler in order to gain permission to access local storage. 
 
-This project is a starting point for a Flutter application.
+It contains the basic features of a Music Application, such as:
 
-A few resources to get you started if this is your first Flutter project:
+Shuffle and Loop modes,
+Search in the PlayList,
+Jump to a specific part in the Audio through the slider, drag forwards and backwards,
+and the Automatic Playing of next songs depending on the mode chosen.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Also, it changeds style and background color depending on the day of the week.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Video:
+
+
+In App ScreenShots:
+
+![Displaying .mp3s fetched from Local Storage](https://drive.google.com/file/d/1IxnSOhH1zsKWx_shzw-qJHzvfOUh-c6P/view?usp=sharing)
+![In App Play](https://drive.google.com/file/d/1IvtjtW6pVx-_KQn4Lvj-g7tfwutJ3eXA/view?usp=sharing)
+![Search Results](https://drive.google.com/file/d/1ItAHkgbKS8Fzk33XQM5MA4DER7W5gDpY/view?usp=sharing)
+![Shuffle Alert](https://drive.google.com/file/d/1IuAfnDlT2Aus08EpKZYW6BgG59dwsgup/view?usp=sharing)
+
+
+
+
+
